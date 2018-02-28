@@ -2,40 +2,32 @@
 
 This folder contains the data behind the story [Why Classic Rock Isn’t What It Used To Be](https://fivethirtyeight.com/features/why-classic-rock-isnt-what-it-used-to-be/).
 
-Each line represents a play of a song on a radio station.
-- The first element, RAW_SONG, is the song text scraped from the radio station
-- The second element, Song Clean, is the song's title. It's been made so that all versions
-	of the RAW_SONG — be they (live) or spelled differently point to the same text in this \
-	field. So even if we scraped "{Don't Fear} The Reaper" or "(Don't Fear) The Reaper"
-	or merely "The Reaper" by Blue Oyster Cult, the text in Song Clean is always "(Don't Fear) The Reaper"
-- The third element, RAW_ARTIST, is the artist text scraped from the radio station
-- The fourth element, ARTIST CLEAN, is a unified version of Raw Artist. So even if we scraped
-	"Blue Öyster Cult" or "Blue Oyster Cult" or "Blue ?yster Cult", this field would always
-	read as "Blue Oyster Cult".
-- The fifth element is that station callsign of the song play
-- The sixth element is time the song was pulled. Python measures time as seconds since January 1, 1970.
-- The seventh element is a unique ID assigned to each play, formed by the callsign of the
-	station that played it and a four digit number, where 0001 is the last song played on the station
-	in our set and the highest number is the first song we pulled, if you want to order them.
-- The eight element combines Song Clean and ARTIST CLEAN. It can be used for connecting
-	this data set to the dataset of unique songs.
-- The ninth element is a zero or one used to find if this is the first mention of a given song,
-	it's pretty pointless.
+`radio.py` is a Python script which scrapes the song data from radio sites.  
+`compiling_radio.py` is a Python script which processes `radio.py`'s output into one file per station.
 
-classic-rock-song-list:
+The following table provides a definition for each data field in `classic-rock-raw-data.csv`:
 
-Each line represents one song in the set
-- Song Clean is the name of the song
-- ARTIST CLEAN is the name of the artist
-- Release Year is the release year, according to SongFacts. If there isn't  a listed year, I couldn't
-	find an entry for the song on SongFacts
-- COMBINED is the combined song and artist and can be used to connect this dataset to classic-rock-raw-data
-- First? is always 1
-- Year? is 1 if there was a found year and 0 if no year was found
-- PlayCount is the number of plays of the song across all stations.
-- F*G is the number of plays of the song across all stations, if a year was found.
+Data Field      | Definition
+----------------|------------
+`SONG RAW`      | The song's raw title which is scraped from the radio station
+`Song Clean`    | The song's title after processing the raw song title
+`ARTIST RAW`    | The song's raw artist's name which is scraped from the radio station
+`ARTIST CLEAN`  | The song's artist's name after processing the raw artist name
+`CALLSIGN`      | The call sign of the radio station which played the song
+`TIME`          | The time (in _seconds_) at which the radio station played the song (note, Python measures time in _seconds_ beginning from January 1, 1970)
+`UNIQUE_ID`     | The unique ID that is assigned to each song. The unique ID is formed by combining the radio's call sign with a four-digit number. `0001` represents the last song that the radio station played. The largest unique ID represents the first song that the radio station played.
+`COMBINED`      | The combination of `Song Clean` and `ARTIST CLEAN` which can be used to connect `classic-rock-raw-data.csv` to `classic-rock-song-list.csv`.
+`First?`        | Indicates if this is the first occurence of the song in the data (`1` if this is the first occurence, `0` otherwise)
 
+The following table provides a definition for each data field in `classic-rock-song-list.csv`:
 
-`radio.py` is the program to scrape the data from radio sites.
-
-`compiling_radio.py` is the program to consolidate the output of radio.py into one file per station.
+Data Field      | Definition
+----------------|------------
+`Song Clean`    | The song's title
+`ARTIST CLEAN`  | The song's artist's name
+`Release Year`  | The song's release year that is obtained from SongFacts. If no year is provided, then the song did not have an entry in SongFacts.
+`COMBINED`      | The combination of `Song Clean` and `ARTIST CLEAN` which can be used to connect `classic-rock-song-list.csv` to `classic-rock-raw-data.csv`.
+`First?`        | This value is always 1. Since all entries of a particular song in `classic-rock-raw-data.csv` are represented by a single entry in `classic-rock-song-list.csv`, there is only one occurence of the song in `classic-rock-song-list.csv`.
+`Year?`         | Indicates if the song's `Release Year` was detected (`1` if `Release Year` was detected, `0` otherwise)
+`PlayCount`     | The number of times the song was played by radio stations. This value corresponds to the total number of entries for the song in `classic-rock-raw-data.csv`.
+`F*G`| _If_ `Year?` is `1`, this field indicates the number of times the song was played by radio stations. 
